@@ -11,30 +11,30 @@ int printArray(int *array, int size){
 }
 int insertElementInListAt(int*list, int size, int location, int item){
 	int newSizeOfList,count;
-	list=realloc(list,((size+1)*sizeof(int)));
-
-	for(count=size;count>=location;count--)
-    {
+	list=realloc(list,((size+1)*sizeof(int)));        // Dynamically re-allocate memory using realloc()
+	/* here using for loop to shift the elements to the right,
+	to make space for the element to be inserted,then
+	starting the loop from the last and shifting elements until the required index  */
+	for(count=size;count>=location;count--){
 		list[count] = list[count - 1];
 	}
-
-	list[location] = item;
-
-	newSizeOfList = ++size;
-
+	list[location] = item;                            // element inserted is at its required index
+	newSizeOfList = ++size;                        // size of array increased after insertion
 	return newSizeOfList;
 }
 int deletion(int*list, int size, int index){
 	int newSizeOfList,count;
-   
-    for(count=index ;count < size-1; count++)
-		list[count] = list[count+1];                            
-		newSizeOfList = --size;                        
+	/* here using for loop to shift the elements to the left,
+	after the deletion of the element from the list to fill up the empty index */
+	for(count=index ;count < size-1; count++)
+		list[count] = list[count+1];                            // every element is shifted to its left to fill empty index
+		newSizeOfList = --size;                         // size of array reduced after deletion
 		return newSizeOfList;
 }
 int linearSearch(int*list, int size, int element){
 	int count;
-
+	/* here for loop is used to search the element traversely,
+	until the element is found */
 	for(count=0 ;count < size; count++)
 		if(list[count]==element)
 			break;
@@ -47,9 +47,11 @@ int linearSearch(int*list, int size, int element){
 int main(){
     int *listA;
 	int count, newSizeOfList, element, index, location, item, operation;
+	/* for convenience item is used in insertion and element is used in linearSearch as both have same meaning,
+	location is used in insertion and index is used in deletion as both have same meaning */
 	printf("How many numbers?\n");
 	scanf(" %d", &size);
-	listA = (int*)malloc(size*sizeof(int));                             
+	listA = (int*)malloc(size*sizeof(int));                             //Dynamically allocating memory using malloc()
 	for (count = 0; count < size; ++count){
 		printf("\nEnter listA[%d]\n", count);
 		scanf(" %d", (listA+count));
