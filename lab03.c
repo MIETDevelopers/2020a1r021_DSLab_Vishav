@@ -1,88 +1,97 @@
 #include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-struct stack
+#include <stdlib.h> // for dynamic memory allocation
+#include <string.h> // for checking the length of the expression using strlen()
+// Structure representing stack
+struct Stack
 {
-    int maxSize;
-    int top;
-    char *stack;
+    char *array; // stores the elements in the stack
+    int top;     // index of the top element
+    int maxSize; // Maximum size of the stack
 };
-bool isEmp(struct stack *stack)
+// isFull() for checking if the stack is full
+int isFull(struct Stack *s)
 {
-    if (stack->top == -1)
-    {
-        return true;
+    if (s->top == s->maxSize - 1)
+    { // when top is equal to the last index, the stack is full
+        return 1;
     }
-    return false;
+    else
+        return 0;
 }
-bool isFul(struct stack *stack)
+// isEmpty() for checking if the stack is empty
+int isEmpty(struct Stack *s)
 {
-    if (stack->top == stack->maxSize - 1)
+    // when top is equal to -1, the stack is empty
+    if (s->top == -1)
     {
-        return true;
+        return 1;
     }
-    return false;
+    else
+        return 0;
 }
-bool push(struct stack *stack, char e)
+// Push function
+void push(struct Stack *s, char ch)
 {
-    if (isFul(stack))
+    if (isFull(s))
     {
-        return false;
+       printf("Stack is full!");
     }
-    stack->top++;
-    stack->stack[stack->top] = e;
-    return true;
+    s->array[++s->top] = ch;
 }
-bool pop(struct stack *stack)
+// Pop function
+int pop(struct Stack *s)
 {
-    if (isEmp(stack))
+    if (isEmpty(s))
     {
-        return false;
+        return 0;
     }
-    stack->top--;
-    return true;
+    s->top--;
+    return 1;
 }
 int main()
 {
-    struct stack stackA;
-    stackA.top = 0;
-    int sizeOfExp;
-    char exp[100];
-    printf("Now enter expression:");
-    scanf("%stack", exp);
-    sizeOfExp = strlen(exp);
-    stackA.stack = (char *)malloc(sizeof(char) * sizeOfExp);
-    stackA.maxSize = sizeOfExp;
-
-    for (int i = 0; i < sizeOfExp; i++)
+    int expSize, i, ret;
+    char exp[30];
+    struct Stack s;
+    s.top = -1;                     // initializing top to -1.
+    printf("\t\t BALANCED PARENTHESIS \n");
+    printf("Enter the expression : ");
+    gets(exp);                   // input the expression using gets()
+    expSize = strlen(exp);      // using strlen() to find the length of the expression.
+    s.maxSize = expSize;        // assigning the size of the expression as the maximum size of the stack.
+    s.array = (char *)malloc(s.maxSize * sizeof(char)); // allocating memory
+    for (i = 0; i < expSize; i++)
     {
-        if (exp[i] == '{' || exp[i] == '[' || exp[i] == '(')
+        // check if the character is a opening bracket.
+        if (exp[i] == '(' || exp[i] == '{' || exp[i] == '[')
         {
-            push(&stackA, exp[i]);
-            continue;
+            push(&s, exp[i]); // if the character is the starting bracket,then push into the stack.
         }
-        if (exp[i] == '}' || exp[i] == ']' || exp[i] == ')')
+        // check if the character is the closing bracket.
+        if (exp[i] == ')' || exp[i] == '}' || exp[i] == ']')
         {
-            if ((stackA.stack[stackA.top] == '{' && exp[i] == '}') || (stackA.stack[stackA.top] == '(' && exp[i] == ')') || (stackA.stack[stackA.top] == '[' && exp[i] == ']'))
+            // if the character is a closing bracket, check if the top of the stack is the pair of the character.
+            if ((s.array[s.top] == '(' && exp[i] == ')') || (s.array[s.top] == '{' && exp[i] == '}') || (s.array[s.top] == '[' && exp[i] == ']'))       // <---- part extracted from Aditya Kotwal's code
             {
-                pop(&stackA);
+                // if matching pairs are found, pop from the stack.
+                ret = pop(&s);
             }
             else
             {
-                printf("UNBALANCED\n");
+                printf("Expression is Not Balanced. \n");
                 return 0;
-            }
+            }    
         }
     }
-    if (stackA.top == 0)
+    if (isEmpty(&s))
     {
-        printf("BALANCED\n");
+        // if the stack is empty, the expression is balanced.
+        printf("Expression is Balanced. \n");
     }
     else
     {
-        printf("UNBALANCED\n");
+        // if the stack is not empty, the expression is not balanced.
+        printf("Expression is Not Balanced. \n");
     }
-
     return 0;
 }
